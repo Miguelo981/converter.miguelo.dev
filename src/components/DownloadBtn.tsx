@@ -1,4 +1,4 @@
-import { saveAs } from 'file-saver';
+import saveAs from 'file-saver';
 import type { ImgFormat } from '../services/convert.service';
 import { Buffer } from 'buffer';
 
