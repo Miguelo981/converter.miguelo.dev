@@ -4,7 +4,7 @@ export interface ConvertedImg {
     source: Buffer;
 }
 
-const host = import.meta.env.NODE_ENV === 'production' ? import.meta.env.PUBLIC_APP_HOST : `${import.meta.env.PUBLIC_APP_HOST}:${import.meta.env.PUBLIC_APP_PORT}`
+const host = import.meta.env.PUBLIC_NODE_ENV === 'production' ? import.meta.env.PUBLIC_APP_HOST : `${import.meta.env.PUBLIC_APP_HOST}:${import.meta.env.PUBLIC_APP_PORT}`
 
 export async function convertImgFile(source: Buffer | string, format: ImgFormat): Promise<ConvertedImg | Error> {
     return await fetch(`${host}/img-convert`, {
