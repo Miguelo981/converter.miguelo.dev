@@ -1,0 +1,88 @@
+$blue: #035282;
+$medium-blue: #445f6f;
+$dark-blue: #033f63;
+$light-grey: #f5f6f6;
+$light-blue: #e6feed;
+$medium-grey: #f1f2f4;
+$grey: #abaeb0;
+$light-bluegrey: #bacbd5;
+$light-red: #fee9e6;
+$medium-red: #ef2206;
+$red: #ab3331;
+$orange: #fa8038;
+$black: #202223;
+$medium-black: #1a242a;
+
+.app-text-input {
+    color: $black;
+    //color: #6D7175;
+    background-color: $light-grey;
+    @apply pl-4 pt-4 p-2 rounded-md block w-full border-transparent outline-transparent;
+
+    &:focus, &:active {
+        outline: none !important;
+        outline-color: transparent;
+        outline-style: none;
+        @apply border-transparent border-0 shadow-transparent shadow-none outline-transparent;
+    }
+
+    &::placeholder {
+        color: $grey;
+    }
+
+    &:disabled {
+        color: $grey;
+        background-color: $medium-grey;
+    }
+
+    /* &:not([value=""]):valid {
+        background-color: $light-blue;
+    } */
+
+    &:invalid {
+        background-color: $light-red !important;
+        border-color: $medium-red;
+        @apply border;
+    }
+}
+
+.input-label {
+    color: $blue;
+    font-size: 10px;
+}
+
+.label-container {
+    @apply flex absolute left-0 pl-4 pt-1 pointer-events-none;
+}
+
+.app-select-input {
+    color: $black;
+    background-color: $light-grey;
+    @apply py-2.5 px-4 border rounded-md block w-full relative border-transparent;
+  
+    &:disabled {
+      color: $grey;
+      background-color: $medium-grey;
+    }
+  
+    &:focus {
+      @apply outline-none;
+    }
+  
+    /*&::after {
+      content: "▼";
+      font-size: 1rem;
+      right: 10px;
+      @apply px-2 absolute;
+    }*/
+  }
+
+.spinner-1 {
+    width: 25px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 4px solid;
+    animation: s1 1s infinite;
+}
+
+@keyframes s1 {to{transform: rotate(.5turn)}}
