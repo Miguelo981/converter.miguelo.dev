@@ -8,9 +8,10 @@ type DownloadBtnProps = {
         name: string;
         format: ImgFormat
     }[];
+    onClick: () => void;
 }
 
-export default function DownloadBtn({ files }: DownloadBtnProps) {
+export default function DownloadBtn({ files, onClick }: DownloadBtnProps) {
     const handleDownloadClick = () => {
         files
             .map((file) =>
@@ -22,12 +23,13 @@ export default function DownloadBtn({ files }: DownloadBtnProps) {
                     saveAs(new Blob([Buffer.from(file.source)]), `${file.name}.${file.format}`);
                 }      
             );
+        onClick();
     }
 
     return (
         <button 
-            className="w-full mb-3 mx-auto px-10 py-2 disabled:bg-slate-400 bg-blue-600 hover:bg-blue-500 transition ease-out rounded-md text-white shadow-md font-semibold flex items-center justify-center space-x-2" 
+            className="download-btn w-full" 
             disabled={files.length < 1}
-            onClick={handleDownloadClick}>Descargar</button>
+            onClick={handleDownloadClick}><span>Descargar</span></button>
     )
 }
