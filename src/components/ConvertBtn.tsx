@@ -1,119 +1,65 @@
-import { useFormik } from "formik";
-import { ChangeEvent, useRef, useState } from "react";
-import { ConvertedImg, convertImgFile, ImgFormat } from "../services/convert.service"
-import "../assets/scss/global.scss";
+import { useState } from "react";
+import { convertImgFile } from "@/services/converter";
 import Loading from "./Loading";
-import { Buffer } from 'buffer';
-import DownloadBtn from "./DownloadBtn";
 
-const IMG_FORMATS = ["png", "jpeg", "bmp", "gif"], MAX_FILE_SIZE = 4096;
+import { ConvertedImg, FormBody } from "@/models/image";
+import type { ImgFormat, Source } from "@/types/types";
 
-type Source = Buffer | string | ArrayBuffer | null;
+interface ConvertBtnProps {
+  source: Source;
+  format: ImgFormat;
+  name?: string;
+  disabled: boolean;
+  onError: (message: string) => void;
+  onSuccess: (file: FormBody) => void;
+}
 
-export default function ConvertBtn() {
-    const inputFile = useRef<HTMLInputElement>()
-    const [serverError, setServerError] = useState<string | null>(null);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [fileList, setFileList] = useState<any>([]);
-    const formik = useFormik({
-        initialValues: { source: "" as Source, format: "png" as ImgFormat },
-        onSubmit: () => {}
-    });
-    
-    const handleClick = async  () => {
-        if (formik.values.source == null) return;
+export default function ConvertBtn({
+  source,
+  format,
+  name,
+  disabled,
+  onError,
+  onSuccess,
+}: ConvertBtnProps) {
+  const [loading, setLoading] = useState<boolean>(false);
 
-        setServerError(null)
-        setLoading(true);
-        const res = await convertImgFile(formik.values.source as any, formik.values.format)
-        setLoading(false);
-
-        if ((res as Error).message) {
-            setServerError((res as Error).message);
-            return;
-        }
-
-        setFileList([...fileList, { source: (res as ConvertedImg).source, format: formik.values.format, name: "testName" }])
-    }
-
-    const handlePickBtn = () => {
-        formik.values.source = null;
-        inputFile.current?.click();
-    }
-
-    const handleDownloadClick = () => {
-        setFileList([]);
-        formik.setFieldValue('source', "");
-    }
-
-    const handleFile = async (evt: ChangeEvent<HTMLInputElement>) => {
-        const file = evt.target.files![0];
-
-        if (!file) return;
-
-        if (file.size / 1000 > MAX_FILE_SIZE) {
-            setServerError("Tamaño de image superior a 4MBs.");
-            return;
-        }
-
-        const reader = new FileReader();
-        
-        reader.onload = () => {
-            if (!(reader.result instanceof ArrayBuffer)) return;
-
-            formik.setFieldValue("source", Buffer.from(reader.result))
-        }
-
-        reader.readAsArrayBuffer(file)
-    }
-    
-    return (
-        <>
-            <div className="rounded-xl border-2 border-blue-600 p-5 bg-white flex flex-col w-full mb-8">
-                <form onSubmit={(evt) => evt.preventDefault()} className="flex flex-col md:flex-row items-center justify-center space-x-3 mb-6 space-y-3 md:space-y-0">
-                    <div className="relative w-full">
-                        <div className="label-container">
-                            <label className="input-label" htmlFor="source">Fuente remoto</label>
-                        </div>
-                        <input className="app-text-input" type="text" name="source" id="source" value={formik.values.source} onChange={formik.handleChange} placeholder="Escribe un enlace remoto" />
-                    </div>
-                    <span> o </span>
-                    <div className="flex flex-col sm:flex-row space-x-4 w-full justify-center items-center">
-                        <button 
-                            className="w-full sm:w-1/2 md:w-auto mx-auto px-10 py-2 border-2 border-blue-600 bg-white hover:bg-blue-600 hover:text-white transition ease-out rounded-md shadow-md font-semibold" 
-                            onClick={handlePickBtn}>
-                                { formik.values.source === null ? "Elegir" : "Cambiar" }
-                        </button>
-                        <input ref={inputFile} type="file" className="hidden" name="source" id="source" 
-                            /* onChange={formik.handleChange} */
-                            onChange={handleFile}
-                            accept={IMG_FORMATS.map(fmt => `.${fmt}`).join(',')} 
-                        />
-                        <div className="relative w-1/2 md:w-52">
-                            <div className="label-container">
-                                <label className="input-label z-20" htmlFor="format">Formato</label>
-                            </div>
-                            <select className="app-select-input z-10" name="format" id="format" onChange={formik.handleChange}>
-                                {
-                                    IMG_FORMATS.map((fmt, index) => (
-                                        <option key={'option-'+index} value={fmt} className="uppercase">{`.${fmt}`}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                    </div>
-                </form>
-                <button 
-                    className="mb-3 mx-auto w-full md:w-56 px-10 py-2 disabled:bg-slate-400 bg-blue-600 hover:bg-blue-500 transition ease-out rounded-md text-white shadow-md font-semibold flex items-center justify-center space-x-2" 
-                    disabled={formik.values.source === null || formik.values.source === "" || loading}
-                    onClick={handleClick}>{ loading ? <Loading color="#fff transparent" /> : null }<span>Convertir</span></button>
-                    {
-                        serverError != null ? 
-                        <p className="text-red-400 text-center">{ serverError }</p>
-                        : null
-                    }
-            </div>
-            <DownloadBtn files={fileList} onClick={handleDownloadClick} />
-        </>
+  const handleClick = async () => {
+    if (
+      loading ||
+      source == null ||
+      (typeof source !== "string" && source instanceof ArrayBuffer)
     )
+      return;
+
+    setLoading(true);
+    const res = await convertImgFile(source, format);
+    setLoading(false);
+
+    if ((name === null || name === "") && typeof source === "string") {
+      name = encodeURI(source).split("/").pop()!.split(".")[0];
+    }
+
+    if ((res as Error).message) {
+      onError((res as Error).message);
+      return;
+    }
+
+    onSuccess({
+      source: (res as ConvertedImg).source,
+      format,
+      name: name ?? "",
+    });
+  };
+
+  return (
+    <button
+      className="mx-auto mb-3 flex w-full items-center justify-center space-x-2 rounded-sm bg-primary px-10 py-2 font-semibold text-white shadow-md transition ease-out hover:bg-primary/80 disabled:bg-slate-400 md:w-56"
+      disabled={disabled || loading}
+      onClick={handleClick}
+    >
+      {loading && <Loading color="#fff transparent" />}
+      <span>Convertir</span>
+    </button>
+  );
 }

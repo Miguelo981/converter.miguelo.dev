@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+main {
+  height: 100vh;
+}
+
+@layer components {
+  body {
+    @apply bg-app-bg text-main
+  }
+
+  .app-text-input {
+    @apply pt-4 p-3 rounded-sm border border-primary block w-full outline-transparent text-app-bg placeholder:text-gray-300 disabled:text-gray-300 disabled:bg-gray-500;
+  }
+
+  .app-text-input:focus,
+  .app-text-input:active {
+    outline: none !important;
+    outline-color: transparent;
+    outline-style: none;
+
+    @apply shadow-transparent shadow-none outline-transparent;
+  }
+  
+  .input-label {
+    font-size: 10px;
+    @apply text-primary;
+  }
+  
+  .label-container {
+    @apply flex absolute left-0 pl-3 pt-1 pointer-events-none;
+  }
+  
+  .download-btn {
+    background: linear-gradient(90deg, #4f39fa, #da62c4);
+  
+    @apply mx-auto px-2 py-2 rounded-sm shadow-md flex;
+  }
+
+  .download-btn:not(:disabled):hover span {
+    @apply hover:text-white hover:bg-transparent;
+  }
+
+  .download-btn:disabled {
+    background: linear-gradient(90deg, #4f39fa, #da62c4);
+    opacity: 0.5;
+  }
+
+  .download-btn span {
+    @apply font-semibold w-full py-2 rounded-sm bg-white text-black ease-out transition-all duration-200;
+  }
+  
+  .app-select-input {
+    @apply text-black bg-slate-300 py-2.5 px-4 border rounded-sm block w-full relative border-transparent disabled:text-gray-500 disabled:bg-gray-200 disabled:cursor-not-allowed focus:outline-none;
+  }
+}
+
+.spinner-1 {
+  width: 25px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 4px solid;
+  animation: s1 1s infinite;
+}
+
+@keyframes s1 {to{transform: rotate(.5turn)}}
