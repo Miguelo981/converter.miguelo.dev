@@ -1,10 +1,11 @@
-export const IMG_FORMATS = [
+import { ImgFormat } from "./types/types";
+
+export const IMG_FORMATS: ImgFormat[] = [
   "png",
   "jpeg",
   "gif",
   "webp",
   "avif",
-  "jp2",
   "tiff",
   "heif",
   "raw",
