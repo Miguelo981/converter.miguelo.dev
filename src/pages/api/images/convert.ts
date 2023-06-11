@@ -2,15 +2,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { checkIfValidFormat, imageRemoteSrcToBuffer } from "@/util/image";
 import { fileConverter } from "@/services/server-converter";
 import { MAX_FILE_SIZE } from "@/constants";
-
-type Data = {
-  message?: string;
-  source?: Buffer;
-};
+import { ConvertResponseData } from "@/types/types";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<ConvertResponseData>
 ) {
   const { method, body } = req;
   const { source, format } = body;

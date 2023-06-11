@@ -4,10 +4,14 @@ export type ImgFormat =
   | "gif"
   | "webp"
   | "avif"
-  | "jp2"
   | "tiff"
   | "heif"
   | "jxl"
   | "raw";
 
 export type Source = Buffer | string | ArrayBuffer | null;
+
+export interface ConvertResponseData {
+  message?: string;
+  source?: Buffer;
+}

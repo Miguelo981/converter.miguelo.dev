@@ -1,10 +1,9 @@
-export const IMG_FORMATS = [
+export const IMG_FORMATS: string[] = [
   "png",
   "jpeg",
   "gif",
   "webp",
   "avif",
-  "jp2",
   "tiff",
   "heif",
   "raw",
