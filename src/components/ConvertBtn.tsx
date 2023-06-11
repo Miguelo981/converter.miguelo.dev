@@ -32,29 +32,31 @@ export default function ConvertBtn({
     )
       return;
 
+    onError("");
     setLoading(true);
-    const res = await convertImgFile(source, format);
-    setLoading(false);
 
-    if ((name === null || name === "") && typeof source === "string") {
-      name = encodeURI(source).split("/").pop()!.split(".")[0];
+    try {
+      const res = await convertImgFile(source, format);
+
+      if ((name === null || name === "") && typeof source === "string") {
+        name = encodeURI(source).split("/").pop()!.split(".")[0];
+      }
+
+      onSuccess({
+        source: (res as ConvertedImg).source,
+        format,
+        name: name ?? "",
+      });
+    } catch (err) {
+      onError((err as Error).message!);
+    } finally {
+      setLoading(false);
     }
-
-    if ((res as Error).message) {
-      onError((res as Error).message);
-      return;
-    }
-
-    onSuccess({
-      source: (res as ConvertedImg).source,
-      format,
-      name: name ?? "",
-    });
   };
 
   return (
     <button
-      className="mx-auto mb-3 flex w-full items-center justify-center space-x-2 rounded-sm bg-primary px-10 py-2 font-semibold text-white shadow-md transition ease-out hover:bg-primary/80 disabled:bg-slate-400 md:w-56"
+      className="mx-auto flex w-full items-center justify-center space-x-2 rounded-sm bg-primary px-10 py-2 font-semibold text-white shadow-md transition ease-out hover:bg-primary/80 disabled:bg-quaternary"
       disabled={disabled || loading}
       onClick={handleClick}
     >
