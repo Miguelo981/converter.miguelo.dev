@@ -1,6 +1,4 @@
-import { ImgFormat } from "./types/types";
-
-export const IMG_FORMATS: ImgFormat[] = [
+export const IMG_FORMATS: string[] = [
   "png",
   "jpeg",
   "gif",
