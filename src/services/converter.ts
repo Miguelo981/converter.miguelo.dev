@@ -1,12 +1,11 @@
-import { ConvertedImg } from "@/models/image";
-import { ImgFormat } from "@/types/types";
+import { ConvertResponseData, ImgFormat } from "@/types/types";
 
 const ENDPOINT = "/api/images";
 
 export async function convertImgFile(
   source: Buffer | string,
   format: ImgFormat
-): Promise<ConvertedImg | Error> {
+): Promise<ConvertResponseData | Error> {
   const controller = new AbortController();
   setTimeout(() => controller.abort(), 5000);
 
@@ -23,9 +22,11 @@ export async function convertImgFile(
     signal: controller.signal,
   });
 
+  const data: ConvertResponseData = await res.json();
+
   if (!res.ok) {
-    throw new Error(`Error converting image: ${res.statusText}`);
+    throw new Error(data.message); // `Error converting image: ${res.statusText}`
   }
 
-  return res.json();
+  return data;
 }

@@ -81,7 +81,9 @@ export default function ConvertForm() {
 
   const handleSuccess = (file: FormBody) => {
     textInput.current!.value = "";
+    formik.setFieldValue("name", "");
     setFileList([...fileList, file]);
+    setSourceFeedback(null);
   };
 
   const handleFileRemove = (file: FormBody) => {
@@ -90,10 +92,10 @@ export default function ConvertForm() {
 
   return (
     <>
-      <header className="mb-8 flex w-full flex-col rounded-xl border-2 border-primary bg-white p-5">
+      <header className="mb-8 flex w-full flex-col rounded-md bg-white p-6">
         <form
           onSubmit={(evt) => evt.preventDefault()}
-          className="mb-6 flex flex-col items-center justify-center space-x-3 space-y-3 md:flex-row md:space-y-0"
+          className="mb-6 flex flex-col items-start justify-center gap-3 md:flex-row"
         >
           <div className="relative w-full">
             <div className="label-container">
@@ -112,28 +114,28 @@ export default function ConvertForm() {
               name="source"
               id="source"
               onChange={formik.handleChange}
-              placeholder="Write image URL here..."
+              placeholder="https://test.com/banana.png"
             />
             {sourceFeedback && (
-              <p
+              <span
                 className={`text-sm ${
                   sourceFeedback.isError ? "text-tertiary" : "text-quaternary"
                 }`}
               >
                 {sourceFeedback.message}
-              </p>
+              </span>
             )}
           </div>
-          <span className="text-app-bg"> o </span>
-          <div className="flex h-full w-full flex-col items-center justify-center space-x-4 sm:flex-row">
+          <span className="py-3 text-app-bg"> o </span>
+          <div className="flex h-full w-full items-center justify-center gap-4">
             <button
-              className="mx-auto h-fit w-full rounded-sm border-2 border-primary bg-white px-10 py-2 font-semibold text-app-bg shadow-md transition duration-100 ease-in-out hover:bg-primary hover:text-white sm:w-1/2 md:w-auto"
+              className="w-1/2 rounded-sm border border-primary bg-white px-0 py-3 text-app-bg shadow-md transition duration-100 ease-in-out hover:bg-primary hover:text-white md:w-full md:px-10"
               onClick={handlePickBtn}
             >
               {formik.values.source === null ||
               typeof formik.values.source === "string"
-                ? "Choose"
-                : "Change"}
+                ? "Pick file"
+                : "Change file"}
             </button>
             <input
               hidden
@@ -144,7 +146,7 @@ export default function ConvertForm() {
               onChange={handleFile}
               accept={IMG_FORMATS.map((fmt) => `.${fmt}`).join(",")}
             />
-            <div className="relative w-1/2 md:w-52">
+            <div className="relative w-1/2 md:w-full">
               <div className="label-container">
                 <label className="input-label z-20" htmlFor="format">
                   Format
@@ -178,17 +180,22 @@ export default function ConvertForm() {
           }
         />
       </header>
-      <footer className="mb-8 flex max-h-[200px] w-full flex-wrap gap-4 overflow-y-auto">
-        {fileList?.map((file) => (
-          <ConvertFileDetail
-            key={randomString(10)}
-            file={file}
-            onRemove={() => handleFileRemove(file)}
-          />
-        ))}
+      {serverError && <ConvertFeedback message={serverError} />}
+      <footer className="relative">
+        <div className="absolute -top-5 left-5 bg-app-bg p-1">
+          <h2 className="text-2xl font-bold text-primary">Preview</h2>
+        </div>
+        <div className="scrollbar mb-8 flex h-[200px] w-full flex-wrap gap-4 overflow-y-auto rounded-lg border border-primary p-5 md:h-[275px]">
+          {fileList?.map((file) => (
+            <ConvertFileDetail
+              key={randomString(10)}
+              file={file}
+              onRemove={() => handleFileRemove(file)}
+            />
+          ))}
+        </div>
       </footer>
       <DownloadBtn files={fileList} onClick={handleDownloadClick} />
-      {serverError && <ConvertFeedback message={serverError} />}
     </>
   );
 }
