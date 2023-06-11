@@ -1,3 +1,4 @@
+import { TIMEOUT_MS } from "@/constants";
 import { ConvertResponseData, ImgFormat } from "@/types/types";
 
 const ENDPOINT = "/api/images";
@@ -7,7 +8,7 @@ export async function convertImgFile(
   format: ImgFormat
 ): Promise<ConvertResponseData | Error> {
   const controller = new AbortController();
-  setTimeout(() => controller.abort(), 5000);
+  setTimeout(() => controller.abort(), TIMEOUT_MS);
 
   const res = await fetch(`${ENDPOINT}/convert`, {
     method: "POST",
