@@ -1,12 +1,16 @@
-FROM node:18-alpine3.14
+FROM node:22
 
 WORKDIR /app
-COPY . .
+
+COPY package*.json ./
 
 RUN npm install -g pnpm
-RUN pnpm install --production
-RUN pnpm build
+RUN pnpm i
 
-EXPOSE 3000
+COPY . .
 
+ENV PORT=3001
+EXPOSE 80
+
+RUN pnpm run build
 CMD [ "pnpm", "start" ]
